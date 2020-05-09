@@ -3,23 +3,26 @@ import * as sortingAlgorithms from '../SortingAlgorithms/SortingAlgorithms.js';
 import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = .1;
+const ANIMATION_SPEED_MS = 8;
 
 // Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 128;
+const NUMBER_OF_ARRAY_BARS = 16;
+
+// Change the size of the bars
+const SIZE_OF_ARRAY_BARS = 64;
 
 // This is the main color of the array bars.
-const PRIMARY_COLOR = 'aqua';
+const PRIMARY_COLOR = 'lightgreen';
 
 // This is the color of array bars that are being compared throughout the animations.
-const SECONDARY_COLOR = 'orange';
+const SECONDARY_COLOR = 'aqua';
 
 export default class SortingVisualizer extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			array: []
+			array: [],
 		};
 	}
 
@@ -30,13 +33,19 @@ export default class SortingVisualizer extends React.Component {
 	resetArray() {
 		const array = [];
 		for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
-			array.push(this.randomInt(1, 512));
+			array.push(this.randomInt(1, SIZE_OF_ARRAY_BARS));
 		}
 		this.setState({ array });
+		let buttons = document.getElementsByClassName('button');
+		for (let i = 1; i < buttons.length; i++) {
+			buttons[i].removeAttribute('disabled');
+			buttons[i].style.color = 'white';
+		}
 	}
 
 	bubbleSort() {
 		this.animate(sortingAlgorithms.getBubbleSortAnimations(this.state.array));
+
 	}
 
 	mergeSort() {
@@ -56,11 +65,14 @@ export default class SortingVisualizer extends React.Component {
 	}
 
 	animate(animations) {
-		console.log(animations);
+		let buttons = document.getElementsByClassName("button")
+		for (let i = 0; i < buttons.length; i++) {
+			buttons[i].setAttribute('disabled', true);
+			buttons[i].style.color = 'black';
+		}
 		let j = 0;
 		for (let i = 0; i < animations.length; i++) {
 			const arrayBars = document.getElementsByClassName(`array-bar`);
-			//console.log(animations[i])
 			if (animations[i].colorChange) {
 				const barOneStyle = arrayBars[animations[i].indexOne].style;
 				const barTwoStyle = arrayBars[animations[i].indexTwo].style;
@@ -79,6 +91,10 @@ export default class SortingVisualizer extends React.Component {
 				}, i * ANIMATION_SPEED_MS);
 			}
 		}
+		setTimeout(() => {
+			buttons[0].removeAttribute('disabled');
+			buttons[0].style.color = 'white';
+		}, animations.length * ANIMATION_SPEED_MS);
 	}
 
 	testSortingAlgorithms() {
@@ -88,31 +104,44 @@ export default class SortingVisualizer extends React.Component {
 	}
 
 	render() {
-		const { array } = this.state;
-
+		const array = this.state.array;
 		return (
 			<div>
 				<div className="array-buttons">
-					<button onClick={() => this.resetArray()}>Generate New Array</button>
-					<button onClick={() => this.bubbleSort()}>Bubble Sort</button>
-					<button onClick={() => this.mergeSort()}>Merge Sort</button>
-					<button onClick={() => this.heapSort()}>Heap Sort</button>
-					<button onClick={() => this.quickSort()}>Quick Sort</button>
-					<button onClick={() => this.cocktailSort()}>Cocktail Sort</button>
-					<button onClick={() => this.testSortingAlgorithms()}>Test Algorithms</button>
+					<button className="button" onClick={() => this.resetArray()} >
+						Generate New Array
+					</button>
+					<div className="seperator">------</div>
+					<button className="button" onClick={() => this.bubbleSort()}>
+						Bubble Sort
+					</button>
+					<button className="button" onClick={() => this.mergeSort()} >
+						Merge Sort
+					</button>
+					<button className="button" onClick={() => this.heapSort()} >
+						Heap Sort
+					</button>
+					<button className="button" onClick={() => this.quickSort()} >
+						Quick Sort
+					</button>
+					<button className="button" onClick={() => this.cocktailSort()} >
+						Cocktail Sort
+					</button>
 				</div>
 				<div className="array">
-					{array.map((value, idx) => (
-						<div
-							className="array-bar"
-							key={idx}
-							style={{
-								backgroundColor: PRIMARY_COLOR,
-								height: `${value}px`,
-							}}></div>
-					))}
+					{
+						array.map((value, idx) => (
+							<div
+								className="array-bar"
+								key={idx}
+								style={{
+									backgroundColor: PRIMARY_COLOR,
+									height: `${value}px`,
+								}}></div>
+						))
+					}
 				</div>
-			</div>
+			</div >
 		);
 	};
 
