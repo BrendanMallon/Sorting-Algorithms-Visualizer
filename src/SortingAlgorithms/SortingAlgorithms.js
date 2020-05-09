@@ -30,7 +30,6 @@ export function getMergeSortAnimations(array) {
 	const animations = [];
 	if (array.length <= 1) return animations;
 	mergeSort(array, 0, array.length - 1, animations);
-	console.log(array);
 	return animations;
 }
 
@@ -102,7 +101,6 @@ export function getHeapSortAnimations(array) {
 		addAnimation(animations, true, 0, i);
 		buildMaxHeap(array, i, 0, animations);
 	}
-	console.log(animations);
 	return animations;
 }
 
