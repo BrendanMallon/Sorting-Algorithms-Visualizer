@@ -1,15 +1,10 @@
 import React from 'react';
 import * as sortingAlgorithms from '../SortingAlgorithms/SortingAlgorithms.js';
 import './SortingVisualizer.css';
+import '../style.css';
 
 // Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = 8;
-
-// Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 16;
-
-// Change the size of the bars
-const SIZE_OF_ARRAY_BARS = 64;
+var animationSpeed = 8;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'lightgreen';
@@ -31,9 +26,34 @@ export default class SortingVisualizer extends React.Component {
 	}
 
 	resetArray() {
+		let width = window.innerWidth;
+		console.log(width);
+		let arraySize;
+		let barSize;
+		if (width >= 1200) {
+			arraySize = 64;
+			barSize = 600;
+			animationSpeed = 2;
+		} else if (width >= 1000) {
+			arraySize = 52;
+			barSize = 500;
+			animationSpeed = 2;
+		} else if (width >= 800) {
+			arraySize = 40;
+			barSize = 400;
+			animationSpeed = 4;
+		} else if (width >= 600) {
+			arraySize = 32;
+			barSize = 300;
+			animationSpeed = 6;
+		} else {
+			arraySize = 16;
+			barSize = 200;
+			animationSpeed = 8;
+		}
 		const array = [];
-		for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
-			array.push(this.randomInt(1, SIZE_OF_ARRAY_BARS));
+		for (let i = 0; i < arraySize; i++) {
+			array.push(this.randomInt(1, barSize));
 		}
 		this.setState({ array });
 		let buttons = document.getElementsByClassName('button');
@@ -80,7 +100,7 @@ export default class SortingVisualizer extends React.Component {
 				setTimeout(() => {
 					barOneStyle.backgroundColor = newColor;
 					barTwoStyle.backgroundColor = newColor;
-				}, i * ANIMATION_SPEED_MS);
+				}, i * animationSpeed);
 			} else {
 				setTimeout(() => {
 					const barOneStyle = arrayBars[animations[i].indexOne].style;
@@ -88,13 +108,13 @@ export default class SortingVisualizer extends React.Component {
 					const tempHeight = barOneStyle.height;
 					barOneStyle.height = barTwoStyle.height;
 					barTwoStyle.height = tempHeight;
-				}, i * ANIMATION_SPEED_MS);
+				}, i * animationSpeed);
 			}
 		}
 		setTimeout(() => {
 			buttons[0].removeAttribute('disabled');
 			buttons[0].style.color = 'white';
-		}, animations.length * ANIMATION_SPEED_MS);
+		}, animations.length * animationSpeed);
 	}
 
 	testSortingAlgorithms() {
@@ -153,9 +173,7 @@ export default class SortingVisualizer extends React.Component {
 		}
 		return true;
 	}
-
 	randomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	}
-
 }
